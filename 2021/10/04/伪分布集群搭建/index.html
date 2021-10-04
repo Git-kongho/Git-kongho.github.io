@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>伪分布集群搭建 | Kongho's Blog</title><meta name="description" content="一、集群搭建1.安装JDK（1）准备软件JDK的安装包已经为大家准备好，在&#x2F;root&#x2F;software目录下，可以使用如下命令进行查看： cd &#x2F;root&#x2F;software&#x2F;		# 进入目录ll					# 罗列出当前文件或目录的详细信息，是ls -l的别名  （2）解压压缩包tar -zxvf jdk-8u221-linux-x64.tar.gz  （3）在此处我们配置系统环境变量，使用命令：v"><meta name="keywords" content="bigdata"><meta name="author" content="kongho"><meta name="copyright" content="kongho"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.kongho.co/2021/10/04/%E4%BC%AA%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="伪分布集群搭建"><meta property="og:url" content="http://www.kongho.co/2021/10/04/%E4%BC%AA%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/"><meta property="og:site_name" content="Kongho's Blog"><meta property="og:description" content="一、集群搭建1.安装JDK（1）准备软件JDK的安装包已经为大家准备好，在&#x2F;root&#x2F;software目录下，可以使用如下命令进行查看： cd &#x2F;root&#x2F;software&#x2F;		# 进入目录ll					# 罗列出当前文件或目录的详细信息，是ls -l的别名  （2）解压压缩包tar -zxvf jdk-8u221-linux-x64.tar.gz  （3）在此处我们配置系统环境变量，使用命令：v"><meta property="og:image" content="http://www.kongho.co/img/image06.jpg"><meta property="article:published_time" content="2021-10-04T13:14:19.299Z"><meta property="article:modified_time" content="2021-10-04T13:20:32.244Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-10-04 21:20:32'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 5.4.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">11</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">一、集群搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85JDK"><span class="toc-number">1.1.</span> <span class="toc-text">1.安装JDK</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E5%87%86%E5%A4%87%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">（1）准备软件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E8%A7%A3%E5%8E%8B%E5%8E%8B%E7%BC%A9%E5%8C%85"><span class="toc-number">1.1.0.2.</span> <span class="toc-text">（2）解压压缩包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E5%9C%A8%E6%AD%A4%E5%A4%84%E6%88%91%E4%BB%AC%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.1.0.3.</span> <span class="toc-text">（3）在此处我们配置系统环境变量，使用命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E5%9C%A8%E6%9C%80%E5%90%8E%E5%8A%A0%E5%85%A5%E4%BB%A5%E4%B8%8B%E4%B8%A4%E8%A1%8C%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="toc-number">1.1.0.4.</span> <span class="toc-text">（4）在最后加入以下两行内容：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%885%EF%BC%89%E8%AE%A9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%AB%8B%E5%8D%B3%E7%94%9F%E6%95%88%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%A6%82%E4%B8%8B%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.1.0.5.</span> <span class="toc-text">（5）让配置文件立即生效，使用如下命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%886%EF%BC%89%E6%A3%80%E6%B5%8BJDK%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E6%9F%A5%E7%9C%8BJDK%E7%89%88%E6%9C%AC%EF%BC%9A"><span class="toc-number">1.1.0.6.</span> <span class="toc-text">（6）检测JDK是否安装成功，使用命令查看JDK版本：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AESSH%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95"><span class="toc-number">1.2.</span> <span class="toc-text">2.配置SSH免密登录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E4%B8%8B%E8%BD%BDSSH%E6%9C%8D%E5%8A%A1%E5%B9%B6%E5%90%AF%E5%8A%A8"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">（1）下载SSH服务并启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E9%A6%96%E5%85%88%E7%94%9F%E6%88%90%E5%AF%86%E9%92%A5%E5%AF%B9%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">（2）首先生成密钥对，使用命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E5%B0%86%E5%85%AC%E9%92%A5%E6%94%BE%E7%BD%AE%E5%88%B0%E6%8E%88%E6%9D%83%E5%88%97%E8%A1%A8%E6%96%87%E4%BB%B6-authorized-keys%E4%B8%AD%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">（3）将公钥放置到授权列表文件 authorized_keys中，使用命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E4%BF%AE%E6%94%B9%E6%8E%88%E6%9D%83%E5%88%97%E8%A1%A8%E6%96%87%E4%BB%B6-authorized-keys-%E7%9A%84%E6%9D%83%E9%99%90%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.2.0.4.</span> <span class="toc-text">（4）修改授权列表文件 authorized_keys 的权限，使用命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%885%EF%BC%89%E9%AA%8C%E8%AF%81%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E6%98%AF%E5%90%A6%E9%85%8D%E7%BD%AE%E6%88%90%E5%8A%9F%EF%BC%8C%E4%BD%BF%E7%94%A8%E5%A6%82%E4%B8%8B%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">1.2.0.5.</span> <span class="toc-text">（5）验证免密登录是否配置成功，使用如下命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%886%EF%BC%89%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%E6%88%90%E5%8A%9F%E5%90%8E%EF%BC%8C%E8%8B%A5%E6%83%B3%E9%80%80%E5%87%BA%EF%BC%8C%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8exit%E5%91%BD%E4%BB%A4%E3%80%82"><span class="toc-number">1.2.0.6.</span> <span class="toc-text">（6）远程登录成功后，若想退出，可以使用exit命令。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%89%E8%A3%85Hadoop"><span class="toc-number">1.3.</span> <span class="toc-text">3.安装Hadoop</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%9B%E5%85%A5%E5%88%B0-root-software%E7%9B%AE%E5%BD%95%EF%BC%8C%E8%A7%A3%E5%8E%8BHadoop%EF%BC%9B"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 进入到&#x2F;root&#x2F;software目录，解压Hadoop；</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AEHadoop%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 配置Hadoop系统变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A6%96%E5%85%88%E6%89%93%E5%BC%80-etc-profile%E6%96%87%E4%BB%B6%EF%BC%88%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%9A%E5%AF%B9%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E6%9C%89%E6%95%88%EF%BC%89%EF%BC%9A"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">(1) 首先打开&#x2F;etc&#x2F;profile文件（系统环境变量：对所有用户有效）：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9C%A8%E6%96%87%E4%BB%B6%E5%BA%95%E9%83%A8%E6%B7%BB%E5%8A%A0%E5%A6%82%E4%B8%8B%E5%86%85%E5%AE%B9%EF%BC%9A"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">(2) 在文件底部添加如下内容：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AEHDFS"><span class="toc-number">1.4.</span> <span class="toc-text">4.配置HDFS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8Fhadoop-env-sh"><span class="toc-number">1.4.0.1.</span> <span class="toc-text">1. 配置环境变量hadoop-env.sh</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6core-site-xml"><span class="toc-number">1.4.0.2.</span> <span class="toc-text">2. 配置核心组件core-site.xml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9Fhdfs-site-xml"><span class="toc-number">1.4.0.3.</span> <span class="toc-text">3. 配置文件系统hdfs-site.xml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AEslaves%E6%96%87%E4%BB%B6%EF%BC%88%E6%97%A0%E9%9C%80%E4%BF%AE%E6%94%B9%EF%BC%89"><span class="toc-number">1.4.0.4.</span> <span class="toc-text">4. 配置slaves文件（无需修改）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.4.0.5.</span> <span class="toc-text">5.格式化文件系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E8%84%9A%E6%9C%AC%E4%B8%80%E9%94%AE%E5%90%AF%E5%8A%A8hdfs"><span class="toc-number">1.4.0.6.</span> <span class="toc-text">6. 脚本一键启动hdfs</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%85%8D%E7%BD%AEYarn"><span class="toc-number">1.5.</span> <span class="toc-text">5.配置Yarn</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8Fyarn-env-sh"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. 配置环境变量yarn-env.sh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E8%AE%A1%E7%AE%97%E6%A1%86%E6%9E%B6mapred-site-xml"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. 配置计算框架mapred-site.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%85%8D%E7%BD%AEYARN%E7%B3%BB%E7%BB%9Fyarn-site-xml"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 配置YARN系统yarn-site.xml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4"><span class="toc-number">1.5.4.</span> <span class="toc-text">4. 启动集群</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E4%BB%93%E9%83%A8%E7%BD%B2%EF%BC%88%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、数仓部署（本地模式）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Hive-%E5%AE%89%E8%A3%85%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">2.0.0.1.</span> <span class="toc-text">Hive 安装模式简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hive-%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%BC%8F%E5%AE%89%E8%A3%85"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">Hive 本地模式安装</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85MySQL%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.1.</span> <span class="toc-text">1.安装MySQL服务</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-MySQL-%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">2.1.0.0.1.</span> <span class="toc-text">安装 MySQL 服务的详细步骤如下：</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Hive%E6%95%B0%E4%BB%93%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.</span> <span class="toc-text">2.Hive数仓部署</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Hive-%E7%9A%84%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">2.2.0.0.1.</span> <span class="toc-text">安装 Hive 的详细步骤如下：</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%85%83%E6%95%B0%E6%8D%AE%E9%85%8D%E7%BD%AE%E5%88%B0MySQL"><span class="toc-number">2.3.</span> <span class="toc-text">3.元数据配置到MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Hive-%E5%85%83%E6%95%B0%E6%8D%AE%E9%85%8D%E7%BD%AE%E5%88%B0-MySQL-%E7%9A%84%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="toc-number">2.3.0.0.1.</span> <span class="toc-text">Hive 元数据配置到 MySQL 的详细步骤如下：</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Hive%E7%AE%80%E5%8D%95%E6%93%8D%E4%BD%9C"><span class="toc-number">2.4.</span> <span class="toc-text">4.Hive简单操作</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/img/image06.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">Kongho's Blog</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">伪分布集群搭建</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-10-04T13:14:19.299Z" title="Created 2021-10-04 21:14:19">2021-10-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-10-04T13:20:32.244Z" title="Updated 2021-10-04 21:20:32">2021-10-04</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="一、集群搭建"><a href="#一、集群搭建" class="headerlink" title="一、集群搭建"></a>一、集群搭建</h1><h2 id="1-安装JDK"><a href="#1-安装JDK" class="headerlink" title="1.安装JDK"></a>1.安装JDK</h2><h4 id="（1）准备软件"><a href="#（1）准备软件" class="headerlink" title="（1）准备软件"></a>（1）准备软件</h4><p>JDK的安装包已经为大家准备好，在/root/software目录下，可以使用如下命令进行查看：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /root/software/		# 进入目录</span><br><span class="line">ll					# 罗列出当前文件或目录的详细信息，是ls -l的别名</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）解压压缩包"><a href="#（2）解压压缩包" class="headerlink" title="（2）解压压缩包"></a>（2）解压压缩包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar -zxvf jdk-8u221-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）在此处我们配置系统环境变量，使用命令："><a href="#（3）在此处我们配置系统环境变量，使用命令：" class="headerlink" title="（3）在此处我们配置系统环境变量，使用命令："></a>（3）在此处我们配置<strong>系统环境变量</strong>，使用命令：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h4 id="（4）在最后加入以下两行内容："><a href="#（4）在最后加入以下两行内容：" class="headerlink" title="（4）在最后加入以下两行内容："></a>（4）在最后加入以下两行内容：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export JAVA_HOME=/root/software/jdk1.8.0_221  # 配置Java的安装目录</span><br><span class="line">export PATH=$PATH:$JAVA_HOME/bin  # 在原PATH的基础上加入JDK的bin目录</span><br></pre></td></tr></table></figure>
+
+<p>一定要注意PATH值的修改，<strong>一定要在引用原PATH值</strong>，否则Linux的很多操作命令就不能使用了。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>export 是把这两个变量导出为全局变量。</li>
+<li>大小写必须严格区分。</li>
+</ul>
+<h4 id="（5）让配置文件立即生效，使用如下命令："><a href="#（5）让配置文件立即生效，使用如下命令：" class="headerlink" title="（5）让配置文件立即生效，使用如下命令："></a>（5）<strong>让配置文件立即生效</strong>，使用如下命令：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h4 id="（6）检测JDK是否安装成功，使用命令查看JDK版本："><a href="#（6）检测JDK是否安装成功，使用命令查看JDK版本：" class="headerlink" title="（6）检测JDK是否安装成功，使用命令查看JDK版本："></a>（6）检测JDK是否安装成功，使用命令查看JDK版本：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure>
+
+<p>执行此命令后，若是出现JDK版本信息说明配置成功：<br><img src="http://assets.qingjiaoclass.com/image/20200206/MVBuOmieXR1580964150.png" alt="image.png"></p>
+<h2 id="2-配置SSH免密登录"><a href="#2-配置SSH免密登录" class="headerlink" title="2.配置SSH免密登录"></a>2.配置SSH免密登录</h2><h4 id="（1）下载SSH服务并启动"><a href="#（1）下载SSH服务并启动" class="headerlink" title="（1）下载SSH服务并启动"></a>（1）下载SSH服务并启动</h4><p>SSH服务（openssh-server和openssh-clients）已经为大家下载好，所以此处直接启动即可：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/usr/sbin/sshd</span><br></pre></td></tr></table></figure>
+
+<p>SSH服务启动成功后，默认开启<strong>22（SSH的默认端口）端口号</strong>，使用以下命令进行从查看：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">netstat -tnulp</span><br></pre></td></tr></table></figure>
+
+<p>执行命令，可以看到<strong>22号端口</strong>已经开启，证明我们SSH服务启动成功：<br><img src="http://assets.qingjiaoclass.com/image/20200206/8PJXrFA1Ij1580965846.png" alt="image.png"></p>
+<p>只要将SSH服务启动成功，我们就可以<strong>进行远程连接访问</strong>了。</p>
+<h4 id="（2）首先生成密钥对，使用命令："><a href="#（2）首先生成密钥对，使用命令：" class="headerlink" title="（2）首先生成密钥对，使用命令："></a>（2）<strong>首先生成密钥对，使用命令：</strong></h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh-keygen</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 或者</span></span></span><br><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+
+<p>上面一种是简写形式，提示要输入信息时不需要输入任何东西，<strong>直接回车三次即可</strong>。</p>
+<p>从打印信息中可以看出，私钥id_rsa和公钥id_rsa.pub都已创建成功，并放在 <strong>/root/.ssh</strong>（<strong>隐藏文件夹（以.开头）</strong>）目录中：</p>
+<p><img src="http://assets.qingjiaoclass.com/image/20200206/syZWHwJdUi1580966097.png" alt="image.png"></p>
+<h4 id="（3）将公钥放置到授权列表文件-authorized-keys中，使用命令："><a href="#（3）将公钥放置到授权列表文件-authorized-keys中，使用命令：" class="headerlink" title="（3）将公钥放置到授权列表文件 authorized_keys中，使用命令："></a>（3）将公钥放置到<strong>授权列表文件 authorized_keys</strong>中，使用命令：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp id_rsa.pub authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>注意：一定要<strong>授权列表文件 authorized_keys</strong>写对，不能改名。</p>
+<h4 id="（4）修改授权列表文件-authorized-keys-的权限，使用命令："><a href="#（4）修改授权列表文件-authorized-keys-的权限，使用命令：" class="headerlink" title="（4）修改授权列表文件 authorized_keys 的权限，使用命令："></a>（4）修改授权列表文件 authorized_keys 的权限，使用命令：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>设置<strong>拥有者可读可写</strong>，其他人无任何权限（不可读、不可写、不可执行）。</p>
+<h4 id="（5）验证免密登录是否配置成功，使用如下命令："><a href="#（5）验证免密登录是否配置成功，使用如下命令：" class="headerlink" title="（5）验证免密登录是否配置成功，使用如下命令："></a>（5）验证免密登录是否配置成功，使用如下命令：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh localhost  </span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 或者</span></span></span><br><span class="line">ssh e2d670ea9ad7</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 或者</span></span></span><br><span class="line">ssh 10.141.0.42</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>localhost</strong>：意为“本地主机”，指“这台计算机”</li>
+<li><strong>e2d670ea9ad7</strong>：本机主机名，可以使用<strong>hostname</strong>命令进行查看</li>
+<li><strong>10.141.0.42</strong>：本机IP地址，可以使用<strong>ifconfig</strong>命令进行查看</li>
+</ul>
+<h4 id="（6）远程登录成功后，若想退出，可以使用exit命令。"><a href="#（6）远程登录成功后，若想退出，可以使用exit命令。" class="headerlink" title="（6）远程登录成功后，若想退出，可以使用exit命令。"></a>（6）远程登录成功后，若想退出，可以使用<strong>exit</strong>命令。</h4><h2 id="3-安装Hadoop"><a href="#3-安装Hadoop" class="headerlink" title="3.安装Hadoop"></a>3.安装Hadoop</h2><h3 id="1-进入到-root-software目录，解压Hadoop；"><a href="#1-进入到-root-software目录，解压Hadoop；" class="headerlink" title="1. 进入到/root/software目录，解压Hadoop；"></a>1. 进入到/root/software目录，解压Hadoop；</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /root/software</span><br><span class="line">tar -zxvf hadoop-2.7.7.tar.gz -C /root/software</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-配置Hadoop系统变量"><a href="#2-配置Hadoop系统变量" class="headerlink" title="2. 配置Hadoop系统变量"></a>2. 配置Hadoop系统变量</h3><h4 id="1-首先打开-etc-profile文件（系统环境变量：对所有用户有效）："><a href="#1-首先打开-etc-profile文件（系统环境变量：对所有用户有效）：" class="headerlink" title="(1) 首先打开/etc/profile文件（系统环境变量：对所有用户有效）："></a>(1) 首先打开/etc/profile文件（系统环境变量：对所有用户有效）：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-在文件底部添加如下内容："><a href="#2-在文件底部添加如下内容：" class="headerlink" title="(2) 在文件底部添加如下内容："></a>(2) 在文件底部添加如下内容：</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置Hadoop的安装目录</span></span><br><span class="line">export HADOOP_HOME=/root/software/hadoop-2.7.7</span><br><span class="line"><span class="meta">#</span><span class="bash"> 在原PATH的基础上加入Hadoop的bin和sbin目录</span></span><br><span class="line">export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin</span><br></pre></td></tr></table></figure>
+
+<p>生效环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-配置HDFS"><a href="#4-配置HDFS" class="headerlink" title="4.配置HDFS"></a>4.配置HDFS</h2><h4 id="1-配置环境变量hadoop-env-sh"><a href="#1-配置环境变量hadoop-env-sh" class="headerlink" title="1. 配置环境变量hadoop-env.sh"></a>1. 配置环境变量hadoop-env.sh</h4><p>打开hadoop-env.sh文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/hadoop-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>找到JAVA_HOME参数位置，<strong>修改为本机安装的JDK的实际位置</strong>：</p>
+<p><img src="http://assets.qingjiaoclass.com/image/20200206/hfI4omepgL1580986028.png" alt="image.png"></p>
+<p>在命令模式下输入 <code>:set nu</code> 可以为vi设置行号。</p>
+<h4 id="2-配置核心组件core-site-xml"><a href="#2-配置核心组件core-site-xml" class="headerlink" title="2. 配置核心组件core-site.xml"></a>2. 配置核心组件core-site.xml</h4><p>该文件是<strong>Hadoop的核心配置文件</strong>，其目的是<strong>配置HDFS地址</strong>、<strong>端口号</strong>，以及<strong>临时文件目录</strong>。使用如下命令<strong>打开“core-site.xml”文件</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/core-site.xml</span><br></pre></td></tr></table></figure>
+
+<p>将下面的配置内容添加到 <code>&lt;configuration&gt;&lt;/configuration&gt;</code> 中间：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- HDFS集群中NameNode的URI（包括协议、主机名称、端口号），默认为 file:/// --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.defaultFS<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 用于指定NameNode的地址 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://localhost:9000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Hadoop运行时产生文件的临时存储目录 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/root/hadoopData/temp<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-配置文件系统hdfs-site-xml"><a href="#3-配置文件系统hdfs-site-xml" class="headerlink" title="3. 配置文件系统hdfs-site.xml"></a>3. 配置文件系统hdfs-site.xml</h4><p>该文件主要用于<strong>配置 HDFS 相关的属性</strong>，例如<strong>复制因子（即数据块的副本数）</strong>、<strong>NameNode 和 DataNode 用于存储数据的目录</strong>等。在<strong>完全分布式模式</strong>下，默认数据块副本是<strong>3 份</strong>。 使用如下命令<strong>打开“hdfs-site.xml”文件</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/hdfs-site.xml</span><br></pre></td></tr></table></figure>
+
+<p>将下面的配置内容添加到 <code>&lt;configuration&gt;&lt;/configuration&gt;</code> 中间：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- NameNode在本地文件系统中持久存储命名空间和事务日志的路径 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.namenode.name.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/root/hadoopData/name<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- DataNode在本地文件系统中存放块的路径 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.datanode.data.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/root/hadoopData/data<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 数据块副本的数量，默认为3 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="4-配置slaves文件（无需修改）"><a href="#4-配置slaves文件（无需修改）" class="headerlink" title="4. 配置slaves文件（无需修改）"></a>4. 配置slaves文件（无需修改）</h4><p>该文件用于<strong>记录Hadoop集群所有从节点</strong>（HDFS的DataNode<em>和</em>YARN的NodeManager所在主机）的主机名，用来配合<strong>一键启动</strong>脚本启动集群从节点（并且还需要保证关联节点配置了<strong>SSH免密登录</strong>）。</p>
+<p>打开该配置文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/slaves</span><br></pre></td></tr></table></figure>
+
+<p>我们看到其默认内容为<strong>localhost</strong>，因为我们搭建的是<strong>伪分布式集群</strong>，就只有一台主机，所以从节点也需要放在此主机上，所以<strong>此配置文件无需修改</strong>。</p>
+<h4 id="5-格式化文件系统"><a href="#5-格式化文件系统" class="headerlink" title="5.格式化文件系统"></a>5.格式化文件系统</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hdfs namenode -format</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-脚本一键启动hdfs"><a href="#6-脚本一键启动hdfs" class="headerlink" title="6. 脚本一键启动hdfs"></a>6. 脚本一键启动hdfs</h4><p>启动集群<strong>最常使用的方式</strong>是使用脚本一键启动，前提是<strong>需要配置 slaves 配置文件和 SSH免密登录</strong>。</p>
+<ul>
+<li><strong>在本机上使用如下方式一键启动HDFS集群：</strong></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">start-dfs.sh</span><br></pre></td></tr></table></figure>
+
+<p>在本机上执行 <code>jps</code> 命令，在打印结果中会看到<strong>4</strong> 个进程，分别是 <strong>NameNode</strong>、<strong>SecondaryNameNode</strong>、<strong>Jps</strong>、和<strong>DataNode</strong>，如果出现了这 4 个进程表示HDFS启动成功。</p>
+<h2 id="5-配置Yarn"><a href="#5-配置Yarn" class="headerlink" title="5.配置Yarn"></a>5.配置Yarn</h2><p>Yarn主要配置文件说明如下：<br><img src="https://assets.qingjiaoclass.com/qyzpbaerkbax/20210414/bkqoojnq_bfZGTPFz1UaOe8TXCf0Q" alt="img"></p>
+<h3 id="1-配置环境变量yarn-env-sh"><a href="#1-配置环境变量yarn-env-sh" class="headerlink" title="1. 配置环境变量yarn-env.sh"></a>1. 配置环境变量yarn-env.sh</h3><p>该文件是<strong>YARN框架运行环境的配置</strong>，同样需要<strong>修改JDK所在位置</strong>。</p>
+<p>使用如下命令打开“yarn-env.sh”文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/yarn-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>找到JAVA_HOME参数位置，将前面的#去掉，将其值修改为本机安装的JDK的实际位置：<br><img src="http://assets.qingjiaoclass.com/image/20200207/Zn1Xo7erlh1581045238.png" alt="image.png"></p>
+<p>在命令模式下输入 <code>:set nu</code> 可以为vi设置行号。</p>
+<h3 id="2-配置计算框架mapred-site-xml"><a href="#2-配置计算框架mapred-site-xml" class="headerlink" title="2. 配置计算框架mapred-site.xml"></a>2. 配置计算框架mapred-site.xml</h3><p>在$HADOOP_HOME/etc/hadoop/目录中默认没有该文件，需要先通过如下命令将文件<strong>复制并重命名为“mapred-site.xml”</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure>
+
+<p>接着，打开“mapred-site.xml”文件进行修改：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/mapred-site.xml</span><br></pre></td></tr></table></figure>
+
+<p>将下面的配置内容添加到 中间：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 指定使用 YARN 运行 MapReduce 程序，默认为 local --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>mapreduce.framework.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>yarn<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>效果如下图所示：<br><img src="http://assets.qingjiaoclass.com/image/20200207/B6gnrtwbWK1581045450.png" alt="image.png"></p>
+<h3 id="3-配置YARN系统yarn-site-xml"><a href="#3-配置YARN系统yarn-site-xml" class="headerlink" title="3. 配置YARN系统yarn-site.xml"></a>3. 配置YARN系统yarn-site.xml</h3><p>本文件是<strong>YARN框架的核心配置文件</strong>，用于<strong>配置 YARN 进程及 YARN 的相关属性</strong>。</p>
+<p>使用如下命令打开该配置文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /root/software/hadoop-2.7.7/etc/hadoop/yarn-site.xml</span><br></pre></td></tr></table></figure>
+
+<p>将下面的配置内容加入中间：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- NodeManager上运行的附属服务，也可以理解为 mapreduce 获取数据的方式 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.nodemanager.aux-services<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>mapreduce_shuffle<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-启动集群"><a href="#4-启动集群" class="headerlink" title="4. 启动集群"></a>4. 启动集群</h3><p>在本机上使用如下方式<strong>一键启动YARN集群</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">start-yarn.sh</span><br></pre></td></tr></table></figure>
+
+<p>ps：start-dfs.sh和start-yarn.sh也是sbin目录下的脚本文件。</p>
+<p><strong>效果图如下所示：</strong><br><img src="http://assets.qingjiaoclass.com/image/20200207/co6NDU9H8k1581049308.png" alt="image.png"></p>
+<p><strong>打印信息：</strong></p>
+<ul>
+<li>在本机上启动了 ResourceManager守护进程</li>
+<li>在本机上启动了 NodeManager 守护进程</li>
+</ul>
+<p>通过本机的浏览器访问<strong><a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088</a></strong>或<strong>http://本机IP地址:8088</strong>查看YARN集群状态，效果如下图所示：<br><img src="http://assets.qingjiaoclass.com/image/20200207/Cziqc6PVRD1581049702.png" alt="image.png"></p>
+<h1 id="二、数仓部署（本地模式）"><a href="#二、数仓部署（本地模式）" class="headerlink" title="二、数仓部署（本地模式）"></a>二、数仓部署（本地模式）</h1><h4 id="Hive-安装模式简介"><a href="#Hive-安装模式简介" class="headerlink" title="Hive 安装模式简介"></a>Hive 安装模式简介</h4><p>　　Hive 的安装模式分为 3 种，分别是<strong>嵌入模式</strong>、<strong>本地模式</strong>和<strong>远程模式</strong>。下面这对这 3 种模式进行介绍。</p>
+<p>　　（1）<strong>嵌入模式</strong>：使用<strong>内嵌的 Derby 数据库</strong>存储元数据，这种方式是 Hive 的默认安装方式，配置简单，但是<strong>同一个目录下一次只能连接一个客户端</strong>，适合用来测试，不适合生产环境。</p>
+<p>　　（2）<strong>本地模式</strong>：采用<strong>外部数据库（一般是 MySQL）</strong> 存储元数据，该模式是一个<strong>多用户的模式</strong>，运行多个客户端连接到一个数据库中。该模式一般作为公司内部同时使用 Hive。该模式<strong>不需要单独开启 Metastore 服务</strong>，因为 Hive 服务和 Metastore 服务运行在同一个进程中，MySQL 是单独的进程，可以与 Hive 在同一台机器上，也可以在远程机器上。</p>
+<p>　　（3）<strong>远程模式</strong>：此模式应用于 <strong>Hive 客户端较多</strong>的情况。与本地模式一样，远程模式也是采用<strong>外部数据库（一般是 MySQL）</strong>存储元数据。不同的是，远程模式<strong>需要单独开启 Metastore 服务</strong>，然后每个客户端都在配置文件中配置连接该 Metastore 服务。远程模式中，<strong>Metastore 服务和 Hive 运行在不同的进程中</strong>。</p>
+<h4 id="Hive-本地模式安装"><a href="#Hive-本地模式安装" class="headerlink" title="Hive 本地模式安装"></a>Hive 本地模式安装</h4><p>　　本地模式和远程模式安装配置方式大致相同，本质上是<strong>将 Hive 默认的元数据存储介质由自带的 Derby 数据库替换为 MySQL 数据库</strong>，这样无论在任何目录下以任何方式启动 Hive，只要<strong>连接的是同一台 Hive 服务</strong>，那么<strong>所有节点访问的元数据信息是一致的</strong>，从而实现元数据的共享。因为我们只有一台主机，所以我们就以本地模式为例。<br>　　本地模式的 Hive 安装主要包括三个步骤：<strong>首先安装 MySQL 服务</strong>，<strong>再安装 Hive</strong>，<strong>最后将 Hive 元数据配置到 MySQL</strong>。</p>
+<h2 id="1-安装MySQL服务"><a href="#1-安装MySQL服务" class="headerlink" title="1.安装MySQL服务"></a>1.安装MySQL服务</h2><h5 id="安装-MySQL-服务的详细步骤如下："><a href="#安装-MySQL-服务的详细步骤如下：" class="headerlink" title="安装 MySQL 服务的详细步骤如下："></a>安装 MySQL 服务的详细步骤如下：</h5><p><strong>1. 解压安装包</strong></p>
+<p>现在已经为大家下载好了 MySQL 5.7.25 的安装包，存放在 <strong>/root/software</strong> 目录下。首先进入此目录下，然后进行解压即可使用，命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /root/software/		# 进入目录</span><br><span class="line">tar -xvf mysql-5.7.25-1.el7.x86_64.rpm-bundle.tar		# 解压安装包到当前目录下</span><br></pre></td></tr></table></figure>
+
+<p>将其<strong>解压到当前目录下</strong>，即 <code>/root/software</code> 中，效果图如下所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_PEvmfqDZz22pXQxXMzFn" alt="img"></p>
+<p><strong>2. 安装 MySQL 组件</strong></p>
+<p>使用 <strong><code>rpm -ivh</code> 命令</strong>依次安装以下组件：</p>
+<p>（1）首先安装 <code>mysql-community-common</code> （服务器和客户端库的公共文件），使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh mysql-community-common-5.7.25-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“100%”，则表示安装成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_ncFlm6s8zgHq7MupzbIt" alt="img"></p>
+<p>（2）其次安装 <code>mysql-community-libs</code>（MySQL 数据库客户端应用程序的共享库），使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh mysql-community-libs-5.7.25-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“100%”，则表示安装成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_Db7gXVCPUVpg1cz7dFEr" alt="img"></p>
+<p>（3）之后安装 <code>mysql-community-libs-compat</code>（MySQL 之前版本的共享兼容库），使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh mysql-community-libs-compat-5.7.25-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“100%”，则表示安装成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_P0sPTAFzVCcnE2F0qGC0" alt="img"></p>
+<p>（4）之后安装 <code>mysql-community-client</code>（MySQL 客户端应用程序和工具），使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh mysql-community-client-5.7.25-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“100%”，则表示安装成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_IE6fK4uoYFblKSAGk9J7" alt="img"></p>
+<p>（5）最后安装 <code>mysql-community-server</code>（数据库服务器和相关工具），使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rpm -ivh mysql-community-server-5.7.25-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“100%”，则表示安装成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_Butv18RC3hMdnbgnYQRA" alt="img"></p>
+<p>报错</p>
+<p><img src="C:\Users\KONGHO\AppData\Roaming\Typora\typora-user-images\image-20211004204321660.png" alt="image-20211004204321660"></p>
+<p>解决：清除yum里所有mysql依赖包</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rpm -qa|grep mysql</span><br><span class="line">yum remove mysql-libs</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 登录 MySQL</strong></p>
+<p>（1）初始化 MySQL 的数据库</p>
+<p>安装好 MySQL 后，我们需要<strong>初始化数据库</strong>，<strong>初始化和启动数据库时最好不要使用 <code>root</code> 用户，而是使用 <code>mysql</code> 用户启动</strong>。命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/usr/sbin/mysqld --initialize-insecure --user=mysql</span><br></pre></td></tr></table></figure>
+
+<p>对于 MySQL 5.7.6 以后的 5.7 系列版本，MySQL 也可以使用 <strong><code>mysqld --initialize</code></strong> 初始化数据库，该命令会在 <code>/var/log/mysqld.log</code> 文件中生成一个登录 MySQL 的随机密码，而 <strong><code>mysqld --initialize-insecure</code> 命令</strong>不会生成随机密码，而是设置 MySQL 的密码为空。</p>
+<p>（2）启动 MySQL 服务</p>
+<p>使用如下命令<strong>开启 MySQL 服务</strong>，让其在后台运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/usr/sbin/mysqld --user=mysql &amp;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明：一定要加“&amp;”，脚本才能放到后台运行。</strong></p>
+<p>执行后，系统会打印出命令执行的PID，如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_YorFEVugiaPuRVdxUvLB" alt="img"></p>
+<p>（3）登录 MySQL</p>
+<p>使用 <code>root</code> 用户<strong>无密码登录 MySQL</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql -uroot</span><br></pre></td></tr></table></figure>
+
+<p>若是出现下图效果，说明登录成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_ttoLd8EuhaWMILU918eT" alt="img"></p>
+<p>（4）重置 MySQL 密码</p>
+<p>在 5.7 版本后，我们可以使用 <strong><code>alter user...identified by</code> 命令**</strong>把 <code>root</code> 用户的密码修改为 “123456”**，具体命令如下所示：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">alter</span> <span class="keyword">user</span> <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> identified <span class="keyword">by</span> <span class="string">&#x27;123456&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>效果如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_bQTqyhJTiH8B3Yb38Awc" alt="img"></p>
+<p>修改完成，<strong>使用 <code>exit</code> 或者 <code>quit</code> 命令退出 MySQL</strong>，重新登录验证密码是否修改成功，具体命令如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql -uroot -p123456</span><br></pre></td></tr></table></figure>
+
+<p>效果如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20200511/jyqngavd_3Eid3eXK7Eff4emZXVoQ" alt="img"></p>
+<p><strong>4. 增加远程登录权限</strong></p>
+<p>当我们的帐号不允许从远程登录，只能在 <code>localhost</code> 连接时，这个时候只要在 MySQL 服务器上，<strong>更改 <code>mysql</code> 数据库里的 <code>user</code> 表里的 <code>host</code> 项，从 <code>localhost</code> 改成 <code>%</code> 即可实现用户远程登录</strong>。</p>
+<p>（1）查看 <code>user</code> 表信息</p>
+<p>使用如下命令<strong>查看 <code>mysql</code> 数据库下的 <code>user</code> 表信息</strong>：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> use mysql;	# 切换成 mysql 数据库</span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> <span class="keyword">user</span>,host <span class="keyword">from</span> <span class="keyword">user</span>;	# 查询用户信息</span><br></pre></td></tr></table></figure>
+
+<p>效果如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_Lu6piRMYBkJEkCslgW6d" alt="img"></p>
+<p>可以看到在 <code>user</code> 表中已创建的 <code>root</code> 用户。<code>host</code> 字段表示登录的主机，其值可以用 IP 地址，也可用主机名。</p>
+<p>（2）实现远程连接（授权法）</p>
+<p><strong>将 <code>host</code> 字段的值改为 <code>%</code> 就表示在任何客户端机器上能以 <code>root</code> 用户登录到 MySQL 服务器</strong>，建议在开发时设为 <code>%</code>。命令如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"># 设置远程登录权限 </span><br><span class="line">mysql<span class="operator">&gt;</span> update <span class="keyword">user</span> <span class="keyword">set</span> host<span class="operator">=</span><span class="string">&#x27;%&#x27;</span> <span class="keyword">where</span> host<span class="operator">=</span><span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"># 刷新配置信息</span><br><span class="line">mysql<span class="operator">&gt;</span> flush privileges;</span><br></pre></td></tr></table></figure>
+
+<p>效果图如下所示：<br><img src="https://assets.qingjiaoclass.com/qingjiao-ppt/2020-5-11/42879f7cbc4f57d0" alt="null"></p>
+<h2 id="2-Hive数仓部署"><a href="#2-Hive数仓部署" class="headerlink" title="2.Hive数仓部署"></a>2.Hive数仓部署</h2><h5 id="安装-Hive-的详细步骤如下："><a href="#安装-Hive-的详细步骤如下：" class="headerlink" title="安装 Hive 的详细步骤如下："></a>安装 Hive 的详细步骤如下：</h5><p><strong>1. 解压安装包</strong></p>
+<p>现在已经为大家下载好了 hive2.3.4 的安装包，存放在 <strong>/root/software</strong> 目录下。首先进入此目录下，然后进行解压即可使用，命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /root/software/		# 进入目录</span><br><span class="line">tar -zxvf apache-hive-2.3.4-bin.tar.gz		# 解压安装包</span><br></pre></td></tr></table></figure>
+
+<p>将其<strong>解压到当前目录下</strong>，即 /root/software 中，效果图如下所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_AGyn69QdlN6UU9TWJusx" alt="img"></p>
+<p><strong>2. 配置环境变量</strong></p>
+<p>（1）首先打开 /etc/profile 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>（2）将以下内容添加到配置文件的底部，添加完成输入**<code>:wq</code>**保存退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 配置Hive的安装目录   </span><br><span class="line">export HIVE_HOME=/root/software/apache-hive-2.3.4-bin  </span><br><span class="line"># 在原PATH的基础上加入Hive的bin目录  </span><br><span class="line">export PATH=$PATH:$HIVE_HOME/bin</span><br></pre></td></tr></table></figure>
+
+<p>（3）让配置文件立即生效，使用如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>（4）检测 Hive 环境变量是否设置成功，使用如下命令查看 Hive 版本：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hive --version</span><br></pre></td></tr></table></figure>
+
+<p>执行此命令后，若是出现 Hive 版本信息说明配置成功：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20200429/jyqngavd_zuGmJHeBbqJLBA0Dk23M" alt="img"></p>
+<p><strong>3. 修改配置文件 hive-env.sh</strong></p>
+<p>切换到 <strong><code>$&#123;HIVE_HOME&#125;/conf</code> 目录</strong>下，将 hive-env.sh.template 文件<strong>复制一份并重命名</strong>为 hive-env.sh：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd $&#123;HIVE_HOME&#125;/conf	# 进入目录</span><br><span class="line">cp hive-env.sh.template hive-env.sh	# 复制并重命名</span><br></pre></td></tr></table></figure>
+
+<p>修改完成，使用 <strong>vim 编辑器</strong>进行编辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim hive-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>在文件中配置 <strong><code>HADOOP_HOME</code>**、</strong><code>HIVE_CONF_DIR</code>** 以及 <strong><code>HIVE_AUX_JARS_PATH</code></strong> 参数的值，将原有值删除并将前面的注释符 <strong><code>#</code></strong> 去掉：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 配置Hadoop安装路径  </span><br><span class="line">HADOOP_HOME=/root/software/hadoop-2.7.7  </span><br><span class="line"># 配置Hive配置文件存放路径  </span><br><span class="line">export HIVE_CONF_DIR=/root/software/apache-hive-2.3.4-bin/conf  </span><br><span class="line"># 配置Hive运行资源库路径  </span><br><span class="line">export HIVE_AUX_JARS_PATH=/root/software/apache-hive-2.3.4-bin/lib</span><br></pre></td></tr></table></figure>
+
+<p>如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_oraXxgoIpC6glaH3yP5f" alt="img"></p>
+<p>配置完成，输入**<code>:wq</code>**保存退出。</p>
+<h2 id="3-元数据配置到MySQL"><a href="#3-元数据配置到MySQL" class="headerlink" title="3.元数据配置到MySQL"></a>3.元数据配置到MySQL</h2><h5 id="Hive-元数据配置到-MySQL-的详细步骤如下："><a href="#Hive-元数据配置到-MySQL-的详细步骤如下：" class="headerlink" title="Hive 元数据配置到 MySQL 的详细步骤如下："></a>Hive 元数据配置到 MySQL 的详细步骤如下：</h5><p><strong>1. 驱动拷贝</strong></p>
+<p>将 <strong>/root/software 目录</strong>下的 MySQL 驱动包 mysql-connector-java-5.1.47-bin.jar <strong>拷贝到 <code>$&#123;HIVE_HOME&#125;/lib</code> 目录</strong>下。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /root/software/	# 进入目录</span><br><span class="line">cp mysql-connector-java-5.1.47-bin.jar apache-hive-2.3.4-bin/lib/	# 拷贝MySQL驱动包</span><br></pre></td></tr></table></figure>
+
+<p>进入 <strong><code>$&#123;HIVE_HOME&#125;/lib</code> 目录</strong>下进行验证：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_JVJOTgggOsErTHnjOy4l" alt="img"></p>
+<p><strong>2. 配置 Metastore 到 MySQL</strong></p>
+<p>（1）在 <strong><code>$&#123;HIVE_HOME&#125;/conf</code> 目录</strong>下创建一个名为 <strong>hive-site.xml</strong> 的文件，并使用 vim 编辑器进行编辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">touch hive-site.xml  # 创建文件</span><br><span class="line">vim hive-site.xml	# 使用vim编辑器进行编辑</span><br></pre></td></tr></table></figure>
+
+<p>（2）根据官方文档配置参数（<a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/AdminManual+Metastore+Administration%EF%BC%89%EF%BC%8C**%E6%8B%B7%E8%B4%9D%E6%95%B0%E6%8D%AE%E5%88%B0">https://cwiki.apache.org/confluence/display/Hive/AdminManual+Metastore+Administration），**拷贝数据到</a> hive-site.xml 文件**中：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span>  </span><br><span class="line"><span class="comment">&lt;!--连接元数据库的链接信息 --&gt;</span>    </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://localhost:3306/hivedb?createDatabaseIfNotExist=true<span class="symbol">&amp;amp;</span>useSSL=false<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>JDBC connect string for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="comment">&lt;!--连接数据库驱动 --&gt;</span>   </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="comment">&lt;!--连接数据库用户名称 --&gt;</span>    </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="comment">&lt;!--连接数据库用户密码 --&gt;</span>   </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">value</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 初始化元数据库</strong></p>
+<p>注意：<strong>如果使用的是 2.x 版本的 Hive，那么就必须手动初始化元数据库。</strong> 使用 <strong><code>schematool -dbType  -initSchema</code> 命令</strong>进行初始化：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">schematool -dbType mysql -initSchema</span><br></pre></td></tr></table></figure>
+
+<p>若是出现“schemaTool completed”则初始化成功，如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20210423/jyqngavd_iNfUxDPoQ450Q7TrNU9X" alt="img"></p>
+<p><strong>4. Hive 连接</strong></p>
+<p>在任意目录下使用 Hive 的三种连接方式之一：<strong>CLI 启动 Hive</strong>。由于已经在环境变量中配置了 HIVE_HOME ，所以这里直接在命令行执行如下命令即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hive  </span><br><span class="line">或者  </span><br><span class="line">hive --service cli</span><br></pre></td></tr></table></figure>
+
+<p>效果如下图所示：<br><img src="https://assets.qingjiaoclass.com/gdlzpoyzbkrj/20200511/jyqngavd_AT3NDqcu6ViewnCOXmrK" alt="img"></p>
+<p>可以使用如下命令退出 Hive 客户端：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hive&gt; exit;</span><br><span class="line">或者</span><br><span class="line">hive&gt; quit;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Hive简单操作"><a href="#4-Hive简单操作" class="headerlink" title="4.Hive简单操作"></a>4.Hive简单操作</h2><p>创建数据库：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create database qingjiao;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用如下命令退出 Hive 客户端：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hive&gt; exit;</span><br><span class="line">或者</span><br><span class="line">hive&gt; quit;</span><br></pre></td></tr></table></figure>
+
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">kongho</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://www.kongho.co/2021/10/04/%E4%BC%AA%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">http://www.kongho.co/2021/10/04/%E4%BC%AA%E5%88%86%E5%B8%83%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/bigdata/">bigdata</a></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2020/11/12/2020%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E8%83%BD%E7%AB%9E%E8%B5%9B%E5%88%9D%E8%B5%9B%E9%A2%98%E8%A7%A3/"><img class="next-cover" data-lazy-src="/img/image05.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">第三届全国大学生大数据技能竞赛初赛培训总结</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/11/12/2020全国大学生大数据技能竞赛初赛题解/" title="第三届全国大学生大数据技能竞赛初赛培训总结"><img class="relatedPosts_cover" data-lazy-src="/img/image05.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-12</div><div class="relatedPosts_title">第三届全国大学生大数据技能竞赛初赛培训总结</div></div></a></div><div class="relatedPosts_item"><a href="/2020/09/26/分布式协调系统--Zookeeper/" title="分布式协调系统--Zookeeper"><img class="relatedPosts_cover" data-lazy-src="/img/Zookeeper/index.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-26</div><div class="relatedPosts_title">分布式协调系统--Zookeeper</div></div></a></div><div class="relatedPosts_item"><a href="/2020/08/02/第三届全国大学生大数据竞赛初赛培训总结/" title="第三届全国大学生大数据技能竞赛初赛培训总结"><img class="relatedPosts_cover" data-lazy-src="/img/image05.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-02</div><div class="relatedPosts_title">第三届全国大学生大数据技能竞赛初赛培训总结</div></div></a></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By kongho</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a href="https://www.kongho.co/">blog</a>!</div><div class="icp"><a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/state/outPortal/loginPortal.action"><img class="icp-icon" src="/img/icp.png"/><span>京ICP备567359</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font_plus" type="button" title="Increase Font Size"><i class="fas fa-plus"></i></button><button id="font_minus" type="button" title="Decrease Font Size"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
